@@ -1,0 +1,8 @@
+# MCP servers are edited in the left sidebar's MCP servers panel, in Settings › MCP servers,
+# or in Plugins › MCP servers › Configure. Saving writes this row's config override into the
+# profile patch through the config editor; secrets go to the DSH credential store.
+- insert:
+    - id: mcp-manager
+      name: dsh-mcp-manager
+      config:
+        servers: []

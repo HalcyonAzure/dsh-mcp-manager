@@ -1,0 +1,53 @@
+{
+  "name": "dsh-mcp-manager",
+  "version": "1.1.0",
+  "description": "Manage MCP servers from a left sidebar panel in DSH instead of YAML",
+  "license": "MIT",
+  "author": "HalcyonAzure",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HalcyonAzure/dsh-mcp-manager.git"
+  },
+  "homepage": "https://github.com/HalcyonAzure/dsh-mcp-manager",
+  "bugs": {
+    "url": "https://github.com/HalcyonAzure/dsh-mcp-manager/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "mcp",
+    "model-context-protocol",
+    "sidebar"
+  ],
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "README.zh.md",
+    "cordis.patch.yml",
+    "icon.svg",
+    "index.js",
+    "client.js",
+    "locale/*.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ]
+    }
+  }
+}

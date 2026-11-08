@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "MCP servers",
+    "description": "Manage MCP servers in the MCP servers panel in the left sidebar; each server's tools appear as mcp__<name>__<tool>."
+  }
+}
