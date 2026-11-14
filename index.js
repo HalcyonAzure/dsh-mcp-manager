@@ -14,6 +14,17 @@ const PROTOCOL = "2025-06-18";
 
 const inject = ["connection"];
 
+/** Raw JSON Schema for the `mcp_servers` agent tool arguments. */
+const TOOL_PARAMETERS = {
+  type: "object",
+  properties: {
+    action: { type: "string", enum: ["list", "test"], description: "\"list\": all servers with status; \"test\": probe one server by name" },
+    name: { type: "string", description: "Server name, required for test" },
+  },
+  required: ["action"],
+  additionalProperties: false,
+};
+
 // ── config normalization & validation ───────────────────────────────────
 
 function isObject(value) {
@@ -500,17 +511,20 @@ async function apply(ctx, rawConfig) {
       toolService.register({
         name: "mcp_servers",
         description: "List the MCP servers managed in Settings › MCP servers with their connection status, or probe one server's connection. Adding, editing, or removing servers is done by the user in that page.",
-        parameters: {
-          action: { type: "string", required: true, description: "\"list\": all servers with status; \"test\": probe one server by name" },
-          name: { type: "string", description: "Server name, required for test" },
-        },
+        // `tools.register()` takes a raw JSON Schema object (ToolSchema.parameters), not the
+        // `defineTool` property-map DSL. A root without `type: "object"` is rejected by
+        // OpenAI/Anthropic-style providers, which fails the whole request and with it every
+        // harness tool; DeepSeek happens to tolerate it.
+        parameters: TOOL_PARAMETERS,
         output: {
           schema: { type: "object" },
           render: (_args, value) => [{ type: "text", text: JSON.stringify(value, null, 2) }],
         },
-        async execute(args) {
+        async execute(rawArgs) {
+          const args = isObject(rawArgs) ? rawArgs : {};
           if (args.action !== "list" && args.action !== "test") return failure("bad-request", "action must be list or test");
           if (args.action === "test") {
+            if (typeof args.name !== "string" || args.name === "") return failure("bad-request", "name is required for test");
             const server = servers.find((s) => s.name === args.name);
             if (!server) return failure("not-found", args.name);
             return probe(credentials(), server);
